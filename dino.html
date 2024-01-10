@@ -1,0 +1,125 @@
+<!doctype html>
+<html>
+<head>
+	<title>Dino</title>
+<style>
+.ground{
+	width: 90vw;
+	height: 200px;
+	position: fixed;
+	top: 20px;
+	left: 50%;
+	transform: translateX(-50%);
+	border-bottom: 1px solid #454545;
+	overflow:hidden
+}
+.dino{
+	width: 25px;
+	height: 25px;
+	background-color: #454545;
+	position: absolute;
+	left: 30px;
+	bottom: 50px;
+	border-radius: 5px 5px 0 0
+}
+.tree{
+	width: 20px;
+	height: 40px;
+	background-color: #454545;
+	position: absolute;
+	right: 30px;
+	bottom : 0
+}
+@media screen and (min-width: 992px) {
+  .ground {
+    width: 70vw;
+  }
+}
+@media screen and (min-width: 1200px) {
+  .ground {
+    width: 55vw;
+  }
+}
+
+</style>
+</head>
+<body>
+
+
+<div class="ground">
+	<div class="dino"></div>
+</div>
+
+
+<script>
+
+const ground = document.querySelector(".ground");
+const trees = [];
+let speed = 5;
+const floor = ground.offsetWidth;
+
+const dino = {
+	block: document.querySelector(".dino"),
+	pos: 50,
+	vel: 0,
+	acc: 0.5
+} 
+
+setInterval( () =>{
+
+	dino.vel += dino.acc;
+	dino.pos += -dino.vel;
+	if(dino.pos < 0){
+		dino.pos = 0;
+		dino.vel = 0;
+	}
+	dino.block.style.bottom = `${dino.pos}px`;
+
+	if(trees.length == 0){
+		let tree = getTree();
+		ground.appendChild(tree);
+		trees.push(tree);
+	}else{
+		for(let t of trees){
+			let pos = getPos(t);
+			t.style.right = `${pos+5}px`;
+			if(pos > floor+100){
+				trees.splice(trees.indexOf(t), 1);
+			}
+		}
+	}
+
+}, 1000/60)
+
+window.addEventListener("keydown", (event)=>{
+	if(["ArrowUp", "Space"].includes(event.code) && dino.pos == 0){
+		dino.vel += -10;
+		dino.pos += -dino.vel;
+		dino.block.style.bottom = `${dino.pos}px`;
+	}
+});
+
+window.addEventListener("keyup", (event)=>{
+	if(["ArrowUp", "Space"].includes(event.code) && dino.vel < 0){
+		dino.vel = 0;
+	}
+});
+
+const getTree = () => {
+	const tree = document.createElement("div");
+	tree.classList.add("tree");
+	tree.style.right = "20px";
+	tree.style.bottom = "0px";
+	return tree;
+}
+
+const getPos = (block) => {
+	let x = block.style.right;
+	x = parseInt(x.split("px")[0]);
+	return x;
+}
+
+</script>
+
+</body>
+</html>

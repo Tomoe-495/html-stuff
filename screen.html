@@ -1,0 +1,70 @@
+<!doctype html>
+<html>
+<head>
+	<title>Screens</title>
+<style>
+body{margin:0}
+.cube{
+	position: fixed;
+	width: 30px;
+	height: 30px;
+	background: #454545;
+	animation: spin 1s infinite linear
+}
+@keyframes spin{
+	from{transform:rotate(0)}
+	to{transform: rotate(180deg)}
+}
+</style>
+</head>
+<body>
+
+
+<div class="cube"></div>
+
+<script>
+
+if(localStorage.getItem("cubes") == null){
+	localStorage.setItem("cubes", JSON.stringify([]));
+}
+
+const cube = document.querySelector(".cube");
+
+let cubes = getJSON();
+
+const pos = {
+	id: cubes.length,
+	x: 300, 
+	y: 300
+};
+
+
+setInterval( () => {
+	
+	cube.style.left = `${pos.x - window.screenX}px`;
+	cube.style.top = `${pos.y - window.screenY}px`;
+
+}, 1000/60)
+
+
+function getJSON(){
+	let data = localStorage.getItem("cubes");
+	return JSON.parse(data);
+}
+
+function setJSON(data){
+	data = JSON.stringify(data);
+	localStorage.setItem("cubes", data);
+}
+
+function check(data, id){
+	for(let c of data){
+		if(c.id == id) return false;
+	} 
+	return true;
+}
+
+</script>
+
+</body>
+</html>

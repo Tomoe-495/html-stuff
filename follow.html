@@ -1,0 +1,188 @@
+<!doctype html>
+<html>
+<head>
+	<title>follow</title>
+<style>
+body{margin:0}
+.block{
+	width:12px;
+	height:12px;
+	background: #454545;
+	border-radius:50%;
+	position: fixed;
+	left:10px;
+	top:10px
+}
+.floor{
+	position: fixed;
+	bottom: 0;
+	left: 0;
+	width: 100vw;
+	height: 10px;
+	background: #454545
+}
+.point{
+	position: fixed;
+	width:8px;
+	height: 8px;
+	background: #252525;
+	border-radius: 50%;
+}
+</style>
+</head>
+<body data-body>
+
+<div class="block"></div>
+
+<div class="floor"></div>
+
+<script>
+
+class Point{
+	constructor(x, y){
+		this.x = x;
+		this.y = y;
+	}
+	span = document.createElement("span");
+
+	acc = 0.1;
+	vel = 0;
+	floor = document.querySelector(".floor").offsetHeight;
+	size = this.span.offsetHeight*4;
+
+	add = () => {
+		document.querySelector("[data-body]").appendChild(this.span)
+		this.span.classList.add("point");
+		this.span.style.left = `${this.x}px`;
+		this.span.style.top = `${this.y}px`;
+	}
+	left = px => {this.span.style.left = `${px}px`;this.x =px}
+	top = py => {this.span.style.top = `${py}px`;this.y =py}
+
+	gravity = () => {
+		this.vel += this.acc;
+		this.top(this.y+this.vel)
+	}
+
+	ground = () => {
+		if(this.y > window.innerHeight-this.floor-this.size){
+			this.top(window.innerHeight-this.floor-this.size);
+			if(this.vel > 1){
+				this.vel = -this.vel/2;
+			} else {
+				this.vel = 0;
+			}
+		}
+	}
+}
+
+class Ball {
+	rect = document.querySelector(".block");
+	floor = document.querySelector(".floor");
+	size = this.rect.offsetWidth;
+	x = 10;
+	y = 10;
+	vel = 0;
+	acc = 0.5;
+	points = []
+	speed = {x:0,y:0}
+
+	left = px => {this.rect.style.left = `${px}px`;this.x = px}
+	top = py => {this.rect.style.top = `${py}px`;this.y = py}
+
+	gravity = () => {
+		this.vel += this.acc;
+		this.top(this.y+this.vel);
+
+	}
+
+	ground = () => {
+		if(this.y > window.innerHeight-this.floor.offsetHeight-this.size){
+			this.top(window.innerHeight-this.floor.offsetHeight-this.size);
+			if(this.vel > 1){
+				this.vel = -this.vel/2;
+			} else {
+				this.vel = 0;
+			}
+		}		
+	}
+
+	move = () => {
+		if(this.points.length){
+
+			let pos = this.points[0];
+			let distance = {x:(pos.x-this.x),y:(pos.y-this.y)}
+			let frames = Math.max(Math.abs(distance.x), Math.abs(distance.y))/20;
+			this.speed.x = distance.x/frames;
+			this.speed.y = distance.y/frames;
+
+			if(col(this.rect, this.points[0].span)){
+				this.points.splice(0, 1);
+				document.querySelectorAll(".point")[0].remove();
+				this.speed.x = this.speed.y = this.vel = 0;
+			}
+		}
+		this.left(this.x+this.speed.x);
+		this.top(this.y+this.speed.y);
+	}
+}
+
+function getPos(block){
+	let x = block.style.left;
+	let y = block.style.top;
+	x = parseInt(x.split("px")[0]);
+	y = parseInt(y.split("px")[0]);
+	return {x:x, y:y};
+}
+
+const ball = new Ball();
+
+setInterval( () => {
+	if(! ball.points.length){
+		ball.gravity();
+	}
+	ball.ground();
+	ball.move();
+	for(let point of ball.points){
+		point.gravity();
+		point.ground();
+	}
+}, 1000/60)
+
+window.addEventListener("click", e => {
+	const x = e.clientX;
+	const y = e.clientY;
+	const point = new Point(x, y);
+	point.add();
+	ball.points.push(point);
+})
+
+const star = [
+	{x:266, y:163},
+	{x:365, y:466},
+	{x:109, y:284},
+	{x:425, y:282},
+	{x:179, y:465}
+]
+let i = 0;
+window.addEventListener("keypress", event => {
+	const key = event.key;
+	if(key == "s"){
+		const point = new Point(star[i].x, star[i].y)
+		point.add();
+		ball.points.push(point);
+		i = i < star.length-1 ? i + 1 : 0;
+	}
+})
+
+function col(el1, el2){
+	const a = el1.getBoundingClientRect();
+	const b = el2.getBoundingClientRect();
+	return (a.x < (b.x + b.width)) && ((a.x + a.width) > b.x) && (a.y < (b.y+b.height)) && ((a.y + a.height) > b.y);
+}
+
+
+</script>
+
+</bod>
+</html>

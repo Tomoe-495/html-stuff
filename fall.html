@@ -1,0 +1,120 @@
+<!doctype html>
+<html>
+<head>
+	<title>fall</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+body{
+	font-family: poppins;
+}
+.block{
+	border-radius: 50%;
+	border: 1px solid rgba(0, 0, 0, .4);
+	position: fixed;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	font-size: .5em;
+	font-weight: 400;
+	user-select: none;
+	background-color: #fff;
+	animation: fade 200ms ease-out;
+}
+@keyframes fade{
+	from{
+		transform: scale(.3);
+	}
+	to{
+		transform: scale(1);
+	}
+}
+.floor{
+	position: fixed;
+	left: 0;
+	bottom: 0;
+	width: 100vw;
+	height: 10px;
+	background-color: rgba(0, 0, 0, .7);
+}
+</style>
+</head>
+
+<body data-body>
+
+
+<div class="floor"></div>
+
+
+<script>
+
+const body = document.querySelector("[data-body]");
+const floor = document.querySelector(".floor");
+
+const size = 20;
+let i = 1;
+const blocks = [];
+
+window.addEventListener("click", e => {
+	const block = new Block(getBlock(), e.clientX-(size/2), e.clientY-(size/2));
+	block.add();
+	blocks.push(block);
+})
+
+const interval = setInterval( () => {
+	for(let block of blocks){
+		block.gravity();
+	}	
+}, 1000/60)
+
+const getBlock = () => {
+	const block = document.createElement("div");
+	block.classList.add("block");
+	block.style.width = `${size}px`;
+	block.style.height = `${size}px`;
+	block.innerHTML = i;
+	i++;
+	return block;
+}
+
+function Block(block, x, y){
+	this.block = block;
+	this.x = x;
+	this.y = y;
+
+	this.vel = 0;
+	this.acc = 0.5;
+
+	this.gravity = () => {
+
+		if(this.y > window.innerHeight - floor.offsetHeight-size){
+			this.block.style.top = `${window.innerHeight-floor.offsetHeight-size}px`;
+			if(this.vel > 4){
+				this.vel = -this.vel/2;
+			}else{
+				this.vel = 0;
+			}
+		}else{
+			this.vel += this.acc;
+
+			this.y += this.vel;
+			this.block.style.top = `${this.y}px`;
+		}
+
+	}
+	this.add = () => {
+		this.block.style.top = `${this.y}px`;
+		this.block.style.left = `${this.x}px`;
+		body.appendChild(this.block);
+	}
+}
+
+function col(el1, el2){
+	const a = el1.getBoundingClientRect();
+	const b = el2.getBoundingClientRect();
+	return (a.x < (b.x + b.width)) && ((a.x + a.width) > b.x) && (a.y < (b.y+b.height)) && ((a.y + a.height) > b.y);
+}
+
+</script>
+
+</body>
+</html>

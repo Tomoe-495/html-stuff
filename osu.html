@@ -1,0 +1,132 @@
+<!doctype html>
+<html>
+<head>
+	<title>OSU!</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+body{
+	margin:0;
+	width: 100vw;
+	height: 100vh;
+	cursor: none;
+	font-family: poppins
+}
+.head{
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	z-index: 9999;
+}
+.head span{
+	width: 5px;
+	height: 5px;
+	borde-radius: 50%;
+	background-color:  rgba(180, 50, 30, .3);
+}
+.cursor{
+	position: fixed;
+	width: 10px;
+	height: 10px;
+	border-radius: 40%;
+	background-color: #454545;
+}
+.fruit{
+	position: fixed;
+	width: 6px;
+	height: 6px;
+	border-radius: 50%;
+	background-color: rgb(180, 50, 30);
+	animation: poppin 1s infinite;
+	transition: all 100ms ease-out;
+}
+@keyframes poppin{
+	0%, 100%, 40%, 60%{
+		transform: scale(1);
+	}50%{
+		transform: scale(1.5);
+	}
+}
+.score{
+	position: fixed;
+	left: 0;
+	top: 0;
+	font-size: .7em;
+}
+.limit{
+position: fixed;
+right: 0;
+top: 0;
+height: 5px;
+background-color: rgb(180, 50, 30)
+}
+</style>
+</head>
+<body data-body>
+
+<span class="score">Score: 0</span>
+<div class="limit"></div>
+<div class="head cursor"><span></span></div>
+
+<div class="fruit"></div>
+
+
+<script>
+
+const head = document.querySelector(".head");
+const fruit = document.querySelector(".fruit");
+const limit = document.querySelector(".limit");
+const sec = 300;
+let count = 0;
+let timeLimit = sec;
+
+setInterval( () =>{
+	timeLimit--;
+	limit.style.width = `${timeLimit}px`;
+	if(timeLimit == 0){
+		window.close();
+	}
+}, 1000/100)
+
+fruit.style.left = `${getRand(10, window.innerWidth-10)}px`;
+fruit.style.top = `${getRand(10, window.innerHeight-10)}px`;
+
+window.addEventListener("mousemove", event => {
+	const x = event.clientX;
+	const y = event.clientY;
+
+	head.style.left = `${x}px`;
+	head.style.top = `${y}px`;
+
+	if(col(head, fruit)){
+		fruit.style.left = `${getRand(10, window.innerWidth-10)}px`;
+		fruit.style.top = `${getRand(10, window.innerHeight-10)}px`;
+		count++;
+		document.querySelector(".score").innerHTML = `Score: ${count}`;
+		timeLimit = sec;
+	}
+})
+
+function getPos(block){
+	let x = block.style.left;
+	let y = block.style.top;
+	
+	x = parseInt(x.split("px")[0]);
+	y = parseInt(y.split("px")[0]);
+	return {x:x, y:y};
+}
+
+function getRand(min, max) {
+	return Math.floor(Math.random() * (max - min + 1) ) + min;
+}
+
+
+function col(el1, el2){
+	const a = el1.getBoundingClientRect();
+	const b = el2.getBoundingClientRect();
+	return (a.x < (b.x + b.width)) && ((a.x + a.width) > b.x) && (a.y < (b.y+b.height)) && ((a.y + a.height) > b.y);
+}
+
+</script>
+
+</body>
+</html>

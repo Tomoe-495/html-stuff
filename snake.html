@@ -1,0 +1,219 @@
+<!doctype html>
+<html>
+<head>
+	<title>snake</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+body{
+	margin: 0;
+	background-color: rgb(245, 245, 245);
+	font-family: poppins
+}
+.body{
+	position: relative;
+	overflow:hidden;
+}
+.block{
+	background-color: #454545;
+	position: absolute;
+}
+.block:nth-child(1){
+	display: flex;
+	justify-content: center;
+	align-items: center;	
+}
+.block:nth-child(1) span{
+	width: 50%;
+	height: 50%;
+	background-color: red;
+	border-radius: 50%;
+}
+.block:nth-last-child(1){
+	width: 8px !important;
+	height: 8px !important;
+	margin: 1px 0 0 1px
+}
+.fruit{
+	width: 7px;
+	height: 7px;
+	background-color: rgb(180, 50, 20);
+	border-radius: 50%;
+	position: fixed;
+	top: 200px;
+	left: 300px;
+	z-index: 0;
+	animation: pop 500ms infinite
+}
+@keyframes pop{
+	0%,100%, 20%, 80%{
+		transform: scale(1);
+	}
+	50%{
+		transform: scale(1.5)
+	}
+}
+.over{
+	position: fixed;
+	top: 50%;
+	right: 0;
+	border: 1px solid rgba(0, 0, 0, .2);
+	padding: 20px 30px;
+	border-radius: 5px;
+	background-color: rgba(235, 235, 235, .9);
+	backdrop-filter: blur(1px);
+	transition: all 300ms ease-out;
+	transform: translateY(-50%) translateX(100%);
+}
+.over.active{
+	transform: translateY(-50%) translateX(0);
+}
+p{
+	margin: 0
+}
+button{
+	cursor: pointer;
+	font-family: inherit
+}
+</style>
+</head>
+<body>
+
+<div class="body" data-body>
+
+<div class="block" data-head><span></span></div>
+
+<span class="fruit" data-fruit></span>
+
+</div>
+
+<div class="over">
+<p>Game over</p>
+<button onClick="location.reload()">play again?</button>
+</div>
+
+
+<script>
+
+const body = document.querySelector("[data-body]");
+
+const fruit = document.querySelector("[data-fruit]");
+const over = document.querySelector(".over");
+
+body.style.width = `${window.innerWidth}px`;
+body.style.height = `${window.innerHeight}px`;
+
+const size = 10;
+let up = 100;
+let left = 100;
+
+let move = "";
+
+const head = document.querySelector("[data-head]");
+head.style.top = `${up}px`;
+head.style.left = `${left}px`;
+head.style.width = `${size}px`;
+head.style.height = `${size}px`;
+
+for(let i = 0; i < 10; i++){
+	up -= size;
+	const block = document.createElement("div");
+	block.classList.add("block");
+	
+	block.style.top = `${up}px`;
+	block.style.left = `${left}px`;
+	block.style.width = `${size}px`;
+	block.style.height = `${size}px`;
+
+	body.appendChild(block);
+}
+
+const interval = setInterval( () => {
+	const blocks = document.getElementsByClassName("block");
+
+	if(move != ""){
+	for(let i = blocks.length-1; i > 0; i--){
+		let blockPos = getPos(blocks[i-1]);
+		blocks[i].style.top = `${blockPos.top}px`;
+		blocks[i].style.left = `${blockPos.left}px`
+	} }
+
+	const blockPos = getPos(blocks[0]);
+	let bodyPos = getPos(body);
+
+	if(move == "up") blockPos.top = blockPos.top < size ? bodyPos.height-size : blockPos.top - size;
+	else if(move == "down") blockPos.top = blockPos.top > bodyPos.height-size ? 0 : blockPos.top + size;
+	else if(move == "left") blockPos.left = blockPos.left < size ? bodyPos.width-size : blockPos.left - size;
+	else if(move == "right") blockPos.left = blockPos.left+(size*2) > bodyPos.width ? 0 : blockPos.left + size;
+
+	blocks[0].style.top = `${blockPos.top}px`;
+	blocks[0].style.left = `${blockPos.left}px`;
+	
+	if(col(blocks[0], fruit)){
+		fruit.style.top = `${getRand(10, bodyPos.height-20)}px`;
+		fruit.style.left = `${getRand(10, bodyPos.width-20)}px`;
+
+		let pos = getPos(blocks[blocks.length-1]);
+		
+		const block = document.createElement("div");
+		block.classList.add("block");
+		block.style.width = `${size}px`;
+		block.style.height = `${size}px`;
+		block.style.left = `${pos.left}px`;
+		block.style.top = `${pos.top}px`;
+		body.appendChild(block);
+	}
+	for(let i = 2; i < blocks.length; i++){
+		if(col(blocks[0], blocks[i])){
+			 clearInterval(interval);
+			over.classList.add("active");
+		}
+	}
+}, 100)
+
+const getPos = (block) => {
+
+	let tup = block.style.top;
+	let tleft = block.style.left;
+	let twidth = block.style.width;
+	let theight = block.style.height;
+
+	tup = tup.split("px")[0];
+	tleft = tleft.split("px")[0];
+	twidth = twidth.split("px")[0];
+	theight = theight.split("px")[0];
+	
+	tup = parseInt(tup);
+	tleft = parseInt(tleft);
+	twidth = parseInt(twidth);
+	theight = parseInt(theight);
+
+	return {top:tup, left:tleft, width:twidth, height:theight};
+}
+
+window.addEventListener("keydown", (event) => {
+	const key = event.key;
+	if(["w", "ArrowUp"].includes(key)) move = move != "down" ? "up" : "down";
+	else if(["a", "ArrowLeft"].includes(key)) move = move != "right" ? "left" : "right";
+	else if(["s", "ArrowDown"].includes(key)) move = move != "up" ? "down" : "up";
+	else if(["d", "ArrowRight"].includes(key)) move = move != "left" ? "right" : "left";
+})
+
+function getRand(min, max) {
+	while(true) {
+		let rand = Math.floor(Math.random() * (max - min + 1) ) + min;
+		if(rand%size==0) {
+			return rand;
+		}
+	} 
+}
+
+function col(el1, el2){
+	const a = el1.getBoundingClientRect();
+	const b = el2.getBoundingClientRect();
+	return (a.x < (b.x + b.width)) && ((a.x + a.width) > b.x) && (a.y < (b.y+b.height)) && ((a.y + a.height) > b.y);
+}
+
+</script>
+
+</body>
+</html>

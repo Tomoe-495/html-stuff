@@ -1,0 +1,171 @@
+<!doctype html>
+<html>
+<head>
+	<title>shoot</title>
+<style>
+body{
+	margin:0;
+	cursor: none;
+	width: 100vw;
+	height: 100vh;
+}
+.rect{
+	position: fixed;
+	width: 20px;
+	height:50px;
+	background: #454545;
+	z-index: 999;
+}
+.point{
+	position: fixed;
+	width: 15px;
+	height: 15px;
+	background: #353535;
+	border-radius: 50%;
+}
+.pointer{
+	position: fixed;
+	width: 10px;
+	height: 10px;
+	border-radius: 50%;
+	border: 2px solid rgb(64, 143, 255);
+}
+.pointer::after{
+	content: "";
+	position: absolute;
+	left: 50%;
+	top: 50%;
+	transform: translateX(-50%) translateY(-50%);
+	width: 60%;
+	height: 60%;
+	border-radius: 50%;
+	background: rgb(64, 143, 255);
+}
+</style>
+</head>
+<body data-body>
+
+<div class="rect"></div>
+<div class="pointer"></div>
+
+<script>
+
+const rect = document.querySelector(".rect");
+rect.style.left = `${30}px`;
+rect.style.top = `${15}px`;
+const pointer = document.querySelector(".pointer");
+pointer.style.left = `${20}px`;
+pointer.style.top = `${20}px`;
+const body = document.querySelector("[data-body]");
+const points = [];
+const pointerPosition = {x:0, y:0};
+
+const HEIGHT = window.innerHeight;
+const WIDTH = window.innerWidth;
+
+
+console.log(pointer.getBoundingClientRect());
+
+class Point{
+	constructor(pos){
+		this.mouse = {x:pos.x, y:pos.y};
+	}
+	x = 33;
+	y = 35;
+	span = document.createElement("span");
+	speed = {x:0, y:0};
+
+	left = px => {
+		this.span.style.left = `${px}px`;
+		this.x = px;
+	}
+	top = py => {
+		this.span.style.top = `${py}px`;
+		this.y = py;
+	}
+	save = () => {
+		this.span.classList.add("point");
+		this.span.style.left = `${this.x}px`;
+		this.span.style.top = `${this.y}px`;
+		body.appendChild(this.span);
+	}
+	remove = index => {
+		points.splice(index, 1);
+		document.querySelectorAll(".point")[index].remove();
+	}
+	move = () => {
+		if(this.speed.x == 0 && this.speed.y == 0) {
+			const distance = {x:(this.mouse.x-this.x), y:(this.mouse.y-this.y)};
+			const frames = Math.max(Math.abs(distance.x), Math.abs(distance.y))/30;
+			this.speed.x = distance.x/frames;
+			this.speed.y = distance.y/frames;
+		}
+		if(this.x - this.span.offsetWidth > WIDTH || this.x < 0){
+			this.speed.x = -this.speed.x;
+		}
+		if(this.y - this.span.offsetHeight*2 > HEIGHT || this.y < 0){
+			this.speed.y = -this.speed.y;
+		}
+		this.left(this.x+this.speed.x);
+		this.top(this.y+this.speed.y);
+	}
+}
+
+setInterval( () => {
+	for(let point of points){
+		point.move();
+//		if(point.x > WIDTH || point.y > HEIGHT || point.x < 0 || point.y < 0){
+//			const index = points.indexOf(point);
+//			points.remove(index);
+//		}
+	}
+	const pointerPos = getPos(pointer);
+	const pos = getPos(rect);
+	const angle = getAngle(pos.x, pos.y, pointerPos.x, pointerPos.y);
+	rect.style.transform = `rotate(${angle}deg)`;
+	const pointPos = getPos(pointer);
+	pointer.style.left = `${pointPos.x + ((pointerPosition.x-pointPos.x)/5)}px`;
+	pointer.style.top = `${pointPos.y + ((pointerPosition.y-pointPos.y)/5)}px`;
+}, 1000/60);
+
+function getAngle(x1, y1, x2, y2) {
+	const angle = Math.atan2(y2-(y1+rect.offsetHeight/3), x2-x1);
+	return angle * (180/Math.PI) + 90;
+}
+
+const addPoint = () => {
+	const point = new Point(getPos(pointer));
+	point.save();
+	points.push(point);
+}
+
+window.addEventListener('click', addPoint);
+window.addEventListener('keypress', event => {
+	if(event.key == "z"){
+		addPoint();
+	}
+})
+
+window.addEventListener('mousemove', e => {
+	const x = e.clientX;
+	const y = e.clientY;
+
+	pointerPosition.x = x - (pointer.offsetWidth/2);
+	pointerPosition.y = y - (pointer.offsetHeight/2);
+})
+
+function getPos(block){
+	let x = block.style.left;
+	let y = block.style.top;
+	x = parseInt(x.split("px")[0]);
+	y = parseInt(y.split("px")[0]);
+	return {x:x, y:y};
+}
+
+
+
+
+</script>
+
+</body>
+</html>

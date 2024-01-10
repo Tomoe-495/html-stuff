@@ -1,0 +1,197 @@
+<html>
+<head>
+	<title>smth</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+body{
+	background-color: rgb(200, 200, 200)
+}
+div{
+	width: 250px;
+	overflow:hidden;
+	font-family: poppins
+}
+.div{
+	position: relative;
+	padding: 3px 0 3px 10px;
+}
+.text{
+	color: rgb(70, 70, 70);
+	font-weight: 500;
+}
+.cursor{
+	position: absolute;
+	height: 100%;
+	top: 0;
+	right: 0;
+	width: 250px;
+	color: rgb(70, 70, 70);
+	background-color: rgb(200, 200, 200);
+	transform: translateX(100%);
+	font-weight: 800;
+	animation: type 3s ease infinite;
+}
+@keyframes type{
+	0%, 100%{
+		right: 100%;
+	}
+	40%,60%{
+		right: 0px;
+	}
+}
+
+.block{
+	user-select: none;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	color: rgb(20, 20, 20);
+	font-weight: 300;
+	font-size: .5em;
+	width:25px;
+	height:25px;
+	background:rgb(200, 200, 200);
+	border-radius: 50%;
+	position:fixed;
+	transition: all 500ms ease-out;
+/*	filter: drop-shadow(rgba(0, 0, 0, .4) 3px 3px 5px) 
+	drop-shadow(rgb(255, 255, 255) -3px -3px 5px)
+*/
+	border: 1px solid rgba(20, 20, 20, .2)
+}
+.position{
+	width:25px;
+	height:25px;
+	border-radius: 50%;
+	position:fixed;
+	left: 200px;
+	top: 70px;
+	border: 1px solid rgba(130, 130, 130, 0.4);
+	pointer-event: none;
+}
+.btn{
+	background:rgb(200, 200, 200);
+	border: none;
+	border-radius: 8px;
+	padding: 5px 10px;
+	margin-top: 20px;
+	font-weight: 600;
+	color: rgb(80, 80, 80);
+	cursor: pointer;
+	filter: drop-shadow(rgba(0, 0, 0, .4) 3px 3px 5px) 
+	drop-shadow(rgb(255, 255, 255) -3px -3px 5px);
+	transition: all 350ms ease-out;
+	font-family: poppins
+}
+.btn:focus, .btn:hover{
+	outline: none;
+	background: rgb(180,180,180);
+	color: #fff;
+	font-weight: 200;
+	letter-spacing: 2px
+}
+.btn:hover{
+	padding: 8px 15px;
+}
+</style>
+</head>
+
+<body>
+
+<div>
+	<span class='div'>
+		<span class='text'></span>
+		<span class='cursor'>|</span>
+	</span>
+</div>
+
+<button class='btn'>Reset</button>
+
+<div data-container></div>
+
+
+
+<script>
+
+const p = document.querySelector(".text");
+const words = ["Acorn Apple Pie.", "Honey dipped on Pancakes.", "Apple Custard."];
+
+let i = 1;
+p.innerHTML = words[0];
+
+setInterval( () => {
+	p.innerHTML = words[i];
+	i < words.length-1 ? i++ : i = 0;
+}, 3000)
+
+const rounds = 100;
+const roundContainer = document.querySelector('[data-container]');
+
+for(let i = 0; i < rounds; i++){
+	const span = document.createElement("span");
+	span.classList.add('block');
+	span.innerHTML = i+1;
+	roundContainer.appendChild(span);	
+}
+
+const block = document.querySelectorAll(".block");
+
+let side = true;
+let change = false;
+
+document.querySelector(".btn").addEventListener('click', () => {
+	let x = 200, y = 70;
+	let i = side ? 0 : rounds-1;
+	change = ! side;
+	const interval = setInterval(()=>{
+		block[i].style.left = `${change ? x += 3 : x -= 3}px`;
+		block[i].style.top = `${y+=4}px`;
+		side ? i++ : i--;
+		change = i%5 == 0 ? ! change : change;
+		if(i == block.length || i == -1){
+			clearInterval(interval);
+			side = ! side;
+		}
+	}, 10)
+})
+
+let px = 200;
+let py = 70;
+
+for(let b of block){
+	b.style.left = `${px}px`;
+	b.style.top = `${py}px`;
+}
+
+function getrand(min=-100, max=100) {
+	while (true) {
+		let val = Math.floor(Math.random() * (max - min) ) + min;
+	
+		if(val < 0 && val < -30){
+			return val;
+		}else if(val > 0 && val > 30){
+			return val;
+		}
+	}
+
+}
+
+
+for(let b of block){
+	b.addEventListener('mouseover', () => {
+	
+		let x = parseInt(b.style.left.slice(0, -2));
+		let y = parseInt(b.style.top.slice(0, -2));
+	
+		x += getrand();
+		y += getrand();
+		
+		b.style.left = `${x}px`;
+		b.style.top = `${y}px`;
+	})
+}
+
+</script>
+
+</body>
+</html>
