@@ -100,10 +100,10 @@ class Point{
 			this.speed.x = distance.x/frames;
 			this.speed.y = distance.y/frames;
 		}
-		if(this.x - this.span.offsetWidth > WIDTH || this.x < 0){
+		if(this.x + this.span.offsetWidth > WIDTH || this.x < 0){
 			this.speed.x = -this.speed.x;
 		}
-		if(this.y - this.span.offsetHeight*2 > HEIGHT || this.y < 0){
+		if(this.y + this.span.offsetHeight > HEIGHT || this.y < 0){
 			this.speed.y = -this.speed.y;
 		}
 		this.left(this.x+this.speed.x);
