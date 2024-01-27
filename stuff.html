@@ -1,0 +1,67 @@
+<!doctype html>
+<html>
+<head>
+	<title>stuff</title>
+<style>
+.floor{
+	position: fixed;
+	left: 0;
+	bottom: 0;
+	width: 100vw;
+	height: 10px;
+	background: #454545
+}
+.ball{
+	position: fixed;
+	width: 15px;
+	height: 15px;
+	border-radius: 50%;
+	background: #353535;
+}
+</style>
+</head>
+<body>
+
+<div class="ball"></div>
+<div class="floor"></div>
+
+<script>
+
+const screen = {width: window.innerWidth, height: window.innerHeight};
+const floor = document.querySelector(".floor").getBoundingClientRect();
+const ball = document.querySelector(".ball");
+
+let vel = 0, acc = 0.5;
+
+setInterval( () => {
+
+	const rect = ball.getBoundingClientRect();
+
+	vel += acc;
+	ball.style.top = `${rect.y + vel}px`;
+
+	if (rect.y + rect.height > floor.y) {
+		ball.style.top = `${floor.y - rect.height}px`;
+		vel = -vel/2;
+	}
+
+}, 1000/60)
+
+
+
+window.addEventListener("resize", () => {
+	screen.width = window.innerWidth;
+	screen.height = window.innerHeight;
+})
+
+window.addEventListener("click", (e) => {
+	vel = 0;
+	ball.style.left = `${e.clientX}px`;
+	ball.style.top = `${e.clientY}px`;
+})
+
+
+</script>
+
+</body>
+</html>

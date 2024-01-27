@@ -9,24 +9,15 @@ body{
 }
 .block{
 	border-radius: 50%;
-	border: 1px solid rgba(0, 0, 0, .4);
 	position: fixed;
 	display: flex;
+	color: #fee;
 	justify-content: center;
 	align-items: center;
 	font-size: .5em;
 	font-weight: 400;
 	user-select: none;
-	background-color: #fff;
-	animation: fade 200ms ease-out;
-}
-@keyframes fade{
-	from{
-		transform: scale(.3);
-	}
-	to{
-		transform: scale(1);
-	}
+	background-color: #353535;
 }
 .floor{
 	position: fixed;
@@ -34,7 +25,7 @@ body{
 	bottom: 0;
 	width: 100vw;
 	height: 10px;
-	background-color: rgba(0, 0, 0, .7);
+	background-color: #454545;
 }
 </style>
 </head>
@@ -48,9 +39,9 @@ body{
 <script>
 
 const body = document.querySelector("[data-body]");
-const floor = document.querySelector(".floor");
+const floor = document.querySelector(".floor").getBoundingClientRect();
 
-const size = 20;
+const size = 15;
 let i = 1;
 const blocks = [];
 
@@ -85,19 +76,14 @@ function Block(block, x, y){
 	this.acc = 0.5;
 
 	this.gravity = () => {
+		const rect = this.block.getBoundingClientRect();
 
-		if(this.y > window.innerHeight - floor.offsetHeight-size){
-			this.block.style.top = `${window.innerHeight-floor.offsetHeight-size}px`;
-			if(this.vel > 4){
-				this.vel = -this.vel/2;
-			}else{
-				this.vel = 0;
-			}
-		}else{
-			this.vel += this.acc;
-
-			this.y += this.vel;
-			this.block.style.top = `${this.y}px`;
+		this.vel += this.acc;
+		this.block.style.top = `${rect.y + this.vel}px`;		
+		
+		if(rect.y + rect.height > floor.y){
+			this.block.style.top = `${floor.y - rect.height}px`;
+			this.vel = -this.vel/2;
 		}
 
 	}
@@ -108,11 +94,6 @@ function Block(block, x, y){
 	}
 }
 
-function col(el1, el2){
-	const a = el1.getBoundingClientRect();
-	const b = el2.getBoundingClientRect();
-	return (a.x < (b.x + b.width)) && ((a.x + a.width) > b.x) && (a.y < (b.y+b.height)) && ((a.y + a.height) > b.y);
-}
 
 </script>
 
