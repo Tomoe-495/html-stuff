@@ -79,14 +79,14 @@ function Block(block, x, y){
 		const rect = this.block.getBoundingClientRect();
 
 		this.vel += this.acc;
-		this.block.style.top = `${rect.y + this.vel}px`;		
-		
+		this.block.style.top = `${rect.y + this.vel}px`;
+
 		if(rect.y + rect.height > floor.y){
 			this.block.style.top = `${floor.y - rect.height}px`;
 			this.vel = -this.vel/2;
 		}
-
 	}
+
 	this.add = () => {
 		this.block.style.top = `${this.y}px`;
 		this.block.style.left = `${this.x}px`;
