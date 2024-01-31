@@ -1,0 +1,103 @@
+<!doctype html>
+<html>
+<head>
+	<title>snow</title>
+<style>
+.snow{
+	position: fixed;
+	border-radius: 50%;
+	background-image: radial-gradient(rgba(0, 0, 0, 255), rgba(0, 0, 0, 0));
+}
+</style>
+</head>
+<body>
+
+
+<script>
+
+const screen = {width: window.innerWidth, height: window.innerHeight, interval: Math.floor((10/window.innerWidth)*250)};
+const snows = [];
+
+class Snow{
+	constructor(x, y, size){
+		this.x = x;
+		this.y = y;
+		this.size = size;
+		this.speed = size/4;
+	}
+
+	div = document.createElement("div");
+	
+	update = () => {
+
+		this.top(this.y + this.speed);
+
+	}
+	
+	top = px => {
+		this.y = px;
+		this.div.style.top = `${this.y}px`;
+	}
+
+	left = px => {
+		this.x = px;
+		this.div.style.left = `${this.x}px`;
+	}
+	
+
+	save = () => {
+		this.div.classList.add("snow");
+		this.div.style.left = `${this.x}px`;
+		this.div.style.top = `${this.y}px`;
+		this.div.style.width = `${this.size}px`;
+		this.div.style.height = `${this.size}px`;
+		document.body.appendChild(this.div);
+	}
+
+	remove = (index) => {
+		snows.splice(index, 1);
+		document.querySelectorAll(".snow")[index].remove();
+	}
+}
+
+
+setInterval( () => {
+
+	if (getRand(screen.interval) == 2){
+		x = getRand(screen.width);
+		y = getRand(0, -100);
+		size = getRand(7, 2);
+		const sw = new Snow(x, y, size);
+		sw.save();
+		snows.push(sw);
+	}
+
+	for(let i in snows){
+		snows[i].update();
+
+		if (snows[i].y > screen.height){
+			snows[i].remove(i);
+		}
+	}
+
+}, 1000/60)
+
+
+function getRand(max, min=1, float=false) {
+  let rd = Math.random() * (max - min + 1)  + min;
+  if (float) {
+	return rd;
+  }
+  return Math.floor(rd);
+}
+
+window.addEventListener("resize", () => {
+	screen.width = window.innerWidth;
+	screen.height = window.innerHeight;
+	screen.interval = Math.floor((10/screen.width)*250);
+})
+
+
+</script>
+</body>
+</html>
