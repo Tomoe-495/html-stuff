@@ -8,15 +8,25 @@
 	border-radius: 50%;
 	background-image: radial-gradient(rgba(0, 0, 0, 255), rgba(0, 0, 0, 0));
 }
+.pointer{
+	position: fixed;
+	width: 20px;
+	height: 20px;
+	border-radius: 50%;
+	border: 1px solid rgba(0, 0, 0, 0.2);
+}
 </style>
 </head>
 <body>
+
+<div class="pointer"></div>
 
 
 <script>
 
 const screen = {width: window.innerWidth, height: window.innerHeight, interval: Math.floor((10/window.innerWidth)*250)};
 const snows = [];
+const pointer = document.querySelector(".pointer");
 
 class Snow{
 	constructor(x, y, size){
@@ -24,13 +34,34 @@ class Snow{
 		this.y = y;
 		this.size = size;
 		this.speed = getRand(size/4, size/5, true);
+		this.vel = 0;
+		this.acc = 1;
+		this.speed_x = x;
 	}
 
 	div = document.createElement("div");
 	
 	update = () => {
 
+		if(checkCol(pointer, this.div)){
+			const pointer_rect = pointer.getBoundingClientRect();
+			if (pointer_rect.x > this.x) {
+//				this.speed_x = this.x + getRand(20, 10);
+console.log("collide left");
+			} else if (pointer_rect.x < this.x) {
+//				this.speed_x = this.x - getRand(20, 10);
+console.log("collide right");
+			}
+		}
+
 		this.top(this.y + this.speed);
+		
+		if (this.speed_x != this.x){
+			this.vel = this.x < this.speed_x ? Math.min(this.speed_x, this.vel + this.acc) : Math.max(this.speed_x, this.vel - this.acc);
+			this.left(this.x + this.vel);
+		}else if(this.speed_x == this.x){
+			this.vel = 0;
+		}
 
 	}
 	
@@ -95,6 +126,21 @@ window.addEventListener("resize", () => {
 	screen.height = window.innerHeight;
 	screen.interval = Math.floor((10/screen.width)*300);
 })
+
+window.addEventListener("mousemove", (e) => {
+	const x = e.clientX - (pointer.offsetWidth/2);
+	const y = e.clientY - (pointer.offsetHeight/2);
+	pointer.style.left = `${x}px`;
+	pointer.style.top = `${y}px`;
+})
+
+function checkCol(ele1, ele2){
+	const rect1 = ele1.getBoundingClientRect();
+	const rect2 = ele2.getBoundingClientRect();
+
+	return !(rect1.right < rect2.left || rect1.left > rect2.right || rect1.bottom < rect2.top || rect1.top > rect2.bottom);
+}
+
 
 
 </script>
