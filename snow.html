@@ -23,7 +23,7 @@ class Snow{
 		this.x = x;
 		this.y = y;
 		this.size = size;
-		this.speed = size/4;
+		this.speed = getRand(size/4, size/5, true);
 	}
 
 	div = document.createElement("div");
@@ -43,7 +43,6 @@ class Snow{
 		this.x = px;
 		this.div.style.left = `${this.x}px`;
 	}
-	
 
 	save = () => {
 		this.div.classList.add("snow");
@@ -63,7 +62,7 @@ class Snow{
 
 setInterval( () => {
 
-	if (getRand(screen.interval) == 2){
+	if (getRand(screen.interval) == 1){
 		x = getRand(screen.width);
 		y = getRand(0, -100);
 		size = getRand(7, 2);
@@ -94,7 +93,7 @@ function getRand(max, min=1, float=false) {
 window.addEventListener("resize", () => {
 	screen.width = window.innerWidth;
 	screen.height = window.innerHeight;
-	screen.interval = Math.floor((10/screen.width)*250);
+	screen.interval = Math.floor((10/screen.width)*300);
 })
 
 
