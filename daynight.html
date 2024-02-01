@@ -1,0 +1,144 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>daynight</title>
+<style>
+.container{
+	width: 100px;
+	height: 100px;
+	background: rgb(20, 20, 20);
+	filter: drop-shadow(0 0 5px rgba(0, 0, 0, 0.5));
+	border-radius: 10px;
+	position: relative;
+	overflow: hidden;
+}
+.container .box{
+	position: absolute;	
+	border: 1px solid rgba(0, 0, 0, 0.3);
+
+}
+.container .ball{
+	position: absolute;
+	border-radius: 50%;
+}
+</style>
+</head>
+<body>
+
+<div class="container"></div>
+
+
+<script>
+
+const container = document.querySelector(".container");
+const size = 20;
+
+container.style.width = `${size*20}px`;
+container.style.height = `${size*20}px`;
+makeBoxes();
+makeBoxes(size*10, "rgb(69, 69, 69)");
+
+class Ball{
+	constructor(x, y, color, speed={x:6, y:6}){
+		this.x = x;
+		this.y = y;
+		this.color = color;
+		this.ball = document.createElement("div");
+		this.speed = speed;
+	}
+
+	boxes = document.querySelectorAll(".box")
+
+	update = () => {
+		
+		const rect = this.ball.getBoundingClientRect();
+		const containerRect = container.getBoundingClientRect();
+
+		if(rect.x < containerRect.x || rect.x + rect.width > containerRect.x + containerRect.width){
+			this.speed.x = -this.speed.x;
+		}
+		if(rect.y < containerRect.y || rect.y + rect.height > containerRect.y + containerRect.height){
+			this.speed.y = -this.speed.y;
+		}
+
+		for(let box of this.boxes){
+			if(checkCol(this.ball, box) && this.ball.style.background == box.style.background){
+				box.style.background = box.style.background == "rgb(255, 255, 255)" ? "rgb(69, 69, 69)" : "rgb(255, 255, 255)";
+
+				const boxRect = box.getBoundingClientRect();
+
+				this.speed.x = -this.speed.x;
+				this.speed.y = -this.speed.y;
+
+			}
+		} // loop end
+
+		this.left(this.x + this.speed.x);
+		this.top(this.y + this.speed.y);
+	}
+
+	top = px => {
+		this.y = px;
+		this.ball.style.top = `${px}px`;
+	}
+
+	left = px => {
+		this.x = px;
+		this.ball.style.left = `${px}px`;
+	}
+
+
+	save = () => {
+		this.ball.classList.add("ball");
+		this.ball.style.left = `${this.x}px`;
+		this.ball.style.top = `${this.y}px`;
+		this.ball.style.width = `${size-2}px`;
+		this.ball.style.height = `${size-2}px`;
+		this.ball.style.background = this.color;
+		container.appendChild(this.ball);
+	}
+
+}
+
+
+const ballBlack = new Ball(size*5, size*10, "rgb(69, 69, 69)", {x:6, y:-6});
+const ballWhite = new Ball(size*15, size*10, "rgb(255, 255, 255)", {x:6, y:-6});
+ballBlack.save();
+ballWhite.save();
+
+setInterval( () => { 
+
+	ballBlack.update();
+	ballWhite.update();
+
+}, 100/60)
+
+
+function makeBoxes(start=0, bg="rgb(255, 255, 255)"){
+	for (let i = 0; i < 20*size; i+=size){ // row
+		for(let j = start; j < (10*size)+start; j+=size){ // column cell
+			const box = document.createElement("div");
+			box.classList.add("box");
+			box.style.left = `${j}px`;
+			box.style.top = `${i}px`;
+			box.style.width = `${size}px`;
+			box.style.height = `${size}px`;
+			box.style.background = bg;
+			container.appendChild(box);
+		}
+	}
+}
+
+function checkCol(ele1, ele2){
+	const rect1 = ele1.getBoundingClientRect();
+	const rect2 = ele2.getBoundingClientRect();
+
+	return !(rect1.right < rect2.left || rect1.left > rect2.right || rect1.bottom < rect2.top || rect1.top > rect2.bottom);
+}
+
+
+</script>
+</body>
+</html>

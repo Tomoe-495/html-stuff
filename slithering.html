@@ -93,9 +93,9 @@ setInterval( () => {
 	const fruitPos = getPos(fruit);
 
 	if(pos.x + head.offsetWidth > screen.width || pos.x < 0){
-		speed.x = -speed.x;
+		speed.x = -speed.x/2;
 	}else if(pos.y + head.offsetHeight > screen.height || pos.y < 0){
-		speed.y = -speed.y;
+		speed.y = -speed.y/2;
 	}
 
 	if(pos.x < fruitPos.x){
