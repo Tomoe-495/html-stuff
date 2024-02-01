@@ -36,7 +36,7 @@ body{
 
 <script>
 
-const screen = {width: window.innerWidth, height: window.innerHeight, interval: Math.floor((10/window.innerWidth)*250)};
+const screen = {width: window.innerWidth, height: window.innerHeight};
 const snows = [];
 const pointer = document.querySelector(".pointer");
 
@@ -106,7 +106,7 @@ class Snow{
 
 setInterval( () => {
 
-	if (getRand(screen.interval) == 1){
+	if (getRand(5) == 1){
 		x = getRand(screen.width);
 		y = getRand(0, -100);
 		size = getRand(10, 2);
@@ -137,7 +137,6 @@ function getRand(max, min=1, float=false) {
 window.addEventListener("resize", () => {
 	screen.width = window.innerWidth;
 	screen.height = window.innerHeight;
-	screen.interval = Math.floor((10/screen.width)*300);
 })
 
 window.addEventListener("mousemove", (e) => {
