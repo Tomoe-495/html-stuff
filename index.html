@@ -8,9 +8,9 @@
         @import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
         body{
             margin: 0;
-            padding:50px 100px;
+            padding: 50px 100px;
             font-family: poppins;
-            background-color: rgb(200, 200, 200)
+            background-color: rgb(200, 200, 200);
         }
         h1, h2, h3, p{
             padding: 0;
@@ -28,20 +28,38 @@
 
     <div class="container">
         <h2>Click any of these</h2>
-        <a href="base.html">Base</a>
-        <a href="dino.html">Dino (not completed)</a>
-        <a href="fall.html">Fall</a>
-        <a href="mouse.html">Mouse</a>
-        <a href="follow.html">Follow</a>
-        <a href="osu.html">osu</a>
-        <a href="screen.html">Screen</a>
-        <a href="ship.html">ship (broken)</a>
-        <a href="shoot.html">shoot</a>
-        <a href="slithering.html">slithering</a>
-        <a href="snake.html">Snake</a>
-        <a href="snow.html">Snow</a>
-        <a href="stuff.html">stuff</a>
     </div>
+    
+<script>
+
+const container = document.querySelector('.container');
+        
+const links = [
+    { name: 'Base', link: 'base.html' },
+    { name: 'Dino (not completed)', link: 'dino.html' },
+    { name: 'Fall', link: 'fall.html' },
+    { name: 'Mouse', link: 'mouse.html' },
+    { name: 'Follow', link: 'follow.html' },
+    { name: 'osu', link: 'osu.html' },
+    { name: 'Screen', link: 'screen.html' },
+    { name: 'ship (broken)', link: 'ship.html' },
+    { name: 'shoot', link: 'shoot.html' },
+    { name: 'slithering', link: 'slithering.html' },
+    { name: 'Snake', link: 'snake.html' },
+    { name: 'Snow', link: 'snow.html' },
+    { name: 'stuff', link: 'stuff.html' },
+    { name: 'daynight (not completed)', link: 'daynight.html' }
+].sort((a, b) => a.name.localeCompare(b.name));
+
+
+for(let item of links){
+    const newLink = document.createElement('a');
+    newLink.href = item.link;
+    newLink.innerHTML = item.name;
+    container.appendChild(newLink);
+};
+
+</script>
     
 </body>
 </html>

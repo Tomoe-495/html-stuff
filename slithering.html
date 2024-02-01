@@ -84,13 +84,13 @@ setInterval( () => {
 	const tail = document.querySelectorAll(".cursor");
 
 	for(let i = tail.length-1; i > 0; i--){
-		const position = getPos(tail[i-1]);
+		const position = tail[i-1].getBoundingClientRect();
 		tail[i].style.left = `${position.x}px`;
 		tail[i].style.top = `${position.y}px`;
 	} 
 
-	const pos = getPos(head);
-	const fruitPos = getPos(fruit);
+	const pos = head.getBoundingClientRect();
+	const fruitPos = fruit.getBoundingClientRect();
 
 	if(pos.x + head.offsetWidth > screen.width || pos.x < 0){
 		speed.x = -speed.x/2;
@@ -138,16 +138,9 @@ setInterval( () => {
 		score.innerHTML = `Score: ${count}`;
 	}
 
-}, 16)
-
-function getPos(block) {
-	let x = block.style.left;
-	let y = block.style.top;
 	
-	x = parseInt(x.split("px")[0]);
-	y = parseInt(y.split("px")[0]);
-	return {x:x, y:y};
-}
+
+}, 16)
 
 function getBlock(x, y) {
 	const span = document.createElement("span");
