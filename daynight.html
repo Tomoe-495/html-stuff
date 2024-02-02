@@ -147,9 +147,10 @@ class Ball{
 	}
 }
 
+speeds = [6, -5];
 
-const ballWhite = new Ball(size*5, size*10, dark, {x:-6, y:5});
-const ballBlack = new Ball(size*15, size*10, light, {x:-5,y:6});
+const ballWhite = new Ball(size*5, size*10, dark, {x:getRand(speeds), y:getRand(speeds)});
+const ballBlack = new Ball(size*15, size*10, light, {x:getRand(speeds),y:getRand(speeds)});
 ballWhite.save();
 ballBlack.save();
 
@@ -189,6 +190,11 @@ function checkCol(element1, element2) {
     }
 
     return 0;
+}
+
+function getRand(arr){
+	const randomIndex = Math.floor(Math.random() * arr.length);
+	return arr[randomIndex];
 }
 
 </script>
