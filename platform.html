@@ -1,0 +1,190 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Platform</title>
+<style>
+.tile{
+	position: fixed;
+	background: #454545;
+}
+.ball{
+	position: fixed;
+	background: #454545;
+	border-radius: 50%;
+}
+</style>
+</head>
+<body>
+
+<div class="container"></div>
+
+
+<script src="collision.js"></script>
+<script>
+
+const body = document.querySelector(".container");
+
+const map = [
+"x-------------------------",
+"x-------------------------",
+"x-------------------------",
+"x-------------------------",
+"x-------------------------",
+"x-------------------------",
+"x-------------------------",
+"x-------------------------",
+"x-------------------------x",
+"xxxxxxxxxxxxxxxxxxxxxxxxxxx"
+]
+
+const size = 16;
+let x = 0, y = 0;
+
+for(let row of map){
+	for(let cell of row){
+		if(cell == "x"){
+			const tile = document.createElement("div");
+			tile.classList.add("tile");
+			tile.style.width = `${size}px`;
+			tile.style.height = `${size}px`;
+			tile.style.left = `${x}px`;
+			tile.style.top = `${y}px`;
+			body.appendChild(tile);
+		}
+		x += size
+	}
+	y += size
+	x = 0;
+}
+
+
+class Ball{
+	constructor(){
+		this.x = size*3;
+		this.y = size*3;
+		this.vel = 0;
+		this.acc = 0.5;
+		this.movement = [0, 0];
+		this.direction = {right:false, left:false};
+		this.speed = 3;
+		
+		this.ball = document.createElement("div");
+	}
+
+	update = () => {
+		if(this.direction.right){
+			this.left(this.x + this.speed);
+			this.movement[0] += this.speed;
+		}if(this.direction.left){
+			this.left(this.x - this.speed);
+			this.movement[0] -= this.speed;
+		}
+		
+	
+		// gravity
+		this.vel += this.acc;
+		this.top(this.y + this.vel);
+		this.movement[1] += this.vel;
+	}
+
+	platform = () => {
+		
+		const collision = this.move(this.ball, this.movement, document.querySelectorAll(".tile"));
+		if(collision.bottom){
+			this.vel = 0;
+		}
+		this.movement = [0, 0];
+	}
+
+	top = (px) => {
+		this.y = px;
+		this.ball.style.top = `${px}px`;
+	}
+
+	left = (px) => {
+		this.x = px;
+		this.ball.style.left = `${px}px`;
+
+	}
+
+	save = () => {
+		this.ball.classList.add("ball");
+		this.ball.style.width = `${size}px`;
+		this.ball.style.height = `${size}px`;
+		this.ball.style.left = `${this.x}px`;
+		this.ball.style.top = `${this.y}px`;
+		body.appendChild(this.ball);
+	}
+
+	move = (rect, movement, tiles) => {
+		const collisionTypes = {top:false, left:false, right:false, bottom:false};
+		const ball = rect.getBoundingClientRect();	
+
+		let hitlist = collisionTest(rect, tiles);
+		for(let tile of hitlist){
+			tile = tile.getBoundingClientRect();
+			if(movement[0] > 0){
+				// fix rect.right to tile.left
+
+				this.left(tile.x - ball.width);
+				collisionTypes.right = true;
+			}else if(movement[0] < 0){
+				// fix rect.left = tile.right
+
+				this.left(tile.x + tile.width)
+				collisionTypes.left = true;
+			}
+		}
+
+		hitlist = collisionTest(rect, tiles);
+		for(let tile of hitlist){
+			tile = tile.getBoundingClientRect();
+			if(movement[1] > 0){
+				// fix rect.bottom to tile.top
+
+				this.top(tile.y - ball.height);
+				collisionTypes.bottom = true;
+			}else if(movement[1] < 0){
+				// fix rect.top = tile.bottom
+
+				this.top(tile.y + tile.height)
+				collisionTypes.bottom = true;
+			}
+		}
+		return collisionTypes;
+	}
+
+}
+
+const ball = new Ball();
+ball.save();
+
+
+setInterval(()=>{
+
+	ball.update();
+	ball.platform();
+
+}, 1000/60)
+
+
+window.addEventListener("keydown", (e) => {
+	const key = e.key.toLowerCase();
+	if(key == "a") ball.direction.left = true;
+	else if (key == "d") ball.direction.right = true;
+})
+
+
+window.addEventListener("keyup", (e) => {
+	const key = e.key.toLowerCase();
+	if(key == "a") ball.direction.left = false;
+	else if (key == "d") ball.direction.right = false;
+})
+
+
+</script>
+
+</body>
+</html>
