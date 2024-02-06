@@ -2,7 +2,7 @@
 <html>
 <head>
 	<meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>shoot</title>
 <style>
 body{
@@ -62,11 +62,7 @@ const body = document.querySelector("[data-body]");
 const points = [];
 const pointerPosition = {x:0, y:0};
 
-const HEIGHT = window.innerHeight;
-const WIDTH = window.innerWidth;
-
-
-console.log(pointer.getBoundingClientRect());
+const screen = {width: window.innerWidth, height: window.innerHeight};
 
 class Point{
 	constructor(pos){
@@ -102,10 +98,10 @@ class Point{
 			this.speed.x = distance.x/frames;
 			this.speed.y = distance.y/frames;
 		}
-		if(this.x + this.span.offsetWidth > WIDTH || this.x < 0){
+		if(this.x + this.span.offsetWidth > screen.width || this.x < 0){
 			this.speed.x = -this.speed.x;
 		}
-		if(this.y + this.span.offsetHeight > HEIGHT || this.y < 0){
+		if(this.y + this.span.offsetHeight > screen.height || this.y < 0){
 			this.speed.y = -this.speed.y;
 		}
 		this.left(this.x+this.speed.x);
@@ -116,7 +112,7 @@ class Point{
 setInterval( () => {
 	for(let point of points){
 		point.move();
-//		if(point.x > WIDTH || point.y > HEIGHT || point.x < 0 || point.y < 0){
+//		if(point.x > screen.width || point.y > screen.height || point.x < 0 || point.y < 0){
 //			const index = points.indexOf(point);
 //			points.remove(index);
 //		}
@@ -164,6 +160,11 @@ function getPos(block){
 	return {x:x, y:y};
 }
 
+
+window.addEventListener("resize", () => {
+	screen.width = window.innerWidth;
+	screen.height = window.innerHeight;
+})
 
 
 
