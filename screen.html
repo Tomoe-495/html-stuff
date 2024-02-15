@@ -11,12 +11,12 @@ body{margin:0}
 	width: 30px;
 	height: 30px;
 	background: #454545;
-	animation: spin 1s infinite linear
+	transition: background 1s ease-out;
 }
-@keyframes spin{
-	from{transform:rotate(0)}
-	to{transform: rotate(180deg)}
+.cube:hover{
+	background: #252525;
 }
+
 </style>
 </head>
 <body>
@@ -26,25 +26,29 @@ body{margin:0}
 
 <script>
 
+const pos = {
+	x: 400,
+	y: 300,
+	angle: 0
+};
+
 if(localStorage.getItem("cubes") == null){
-	localStorage.setItem("cubes", JSON.stringify([]));
+	setJSON(pos);
 }
 
 const cube = document.querySelector(".cube");
 
-let cubes = getJSON();
-
-const pos = {
-	id: cubes.length,
-	x: 300, 
-	y: 300
-};
-
-
 setInterval( () => {
-	
+
+	pos.angle = getJSON().angle;
+
+	pos.angle = pos.angle >= 360 ? 0 : pos.angle + 2;
+
 	cube.style.left = `${pos.x - window.screenX}px`;
 	cube.style.top = `${pos.y - window.screenY}px`;
+	cube.style.transform = `rotateZ(${pos.angle}deg)`;
+	
+	setJSON(pos);
 
 }, 1000/60)
 
@@ -59,12 +63,6 @@ function setJSON(data){
 	localStorage.setItem("cubes", data);
 }
 
-function check(data, id){
-	for(let c of data){
-		if(c.id == id) return false;
-	} 
-	return true;
-}
 
 </script>
 
