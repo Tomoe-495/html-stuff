@@ -66,36 +66,34 @@ class Ball{
 		this.y = size*3;
 		this.vel = 0;
 		this.acc = 0.5;
-		this.movement = [0, 0];
 		this.direction = {right:false, left:false};
 		this.speed = 3;
 		
 		this.ball = document.createElement("div");
 	}
 
-	update = () => {
+	update = (movement) => {
 		if(this.direction.right){
-			this.left(this.x + this.speed);
-			this.movement[0] += this.speed;
+			movement[0] += this.speed;
 		}if(this.direction.left){
-			this.left(this.x - this.speed);
-			this.movement[0] -= this.speed;
+			movement[0] -= this.speed;
 		}
 		
 	
 		// gravity
 		this.vel += this.acc;
 		this.top(this.y + this.vel);
-		this.movement[1] += this.vel;
+		movement[1] += this.vel;
 	}
 
-	platform = () => {
+	platform = (movement) => {
 		
-		const collision = this.move(this.ball, this.movement, document.querySelectorAll(".tile"));
+		const collision = this.move(this.ball, movement, document.querySelectorAll(".tile"));
 		if(collision.bottom){
 			this.vel = 0;
 		}
 		this.movement = [0, 0];
+		console.log(collision)
 	}
 
 	top = (px) => {
@@ -106,7 +104,6 @@ class Ball{
 	left = (px) => {
 		this.x = px;
 		this.ball.style.left = `${px}px`;
-
 	}
 
 	save = () => {
@@ -122,6 +119,7 @@ class Ball{
 		const collisionTypes = {top:false, left:false, right:false, bottom:false};
 		const ball = rect.getBoundingClientRect();	
 
+		this.left(this.x + movement[0]);
 		let hitlist = collisionTest(rect, tiles);
 		for(let tile of hitlist){
 			tile = tile.getBoundingClientRect();
@@ -138,6 +136,7 @@ class Ball{
 			}
 		}
 
+		this.top(this.y + movement[1]);
 		hitlist = collisionTest(rect, tiles);
 		for(let tile of hitlist){
 			tile = tile.getBoundingClientRect();
@@ -162,10 +161,12 @@ const ball = new Ball();
 ball.save();
 
 
-setInterval(()=>{
+setInterval( () => {
 
-	ball.update();
-	ball.platform();
+	const movement = [0, 0];
+
+	ball.update(movement);
+	ball.platform(movement);
 
 }, 1000/60)
 
