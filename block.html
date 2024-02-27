@@ -1,0 +1,60 @@
+<!doctype html>
+<html>
+<head>
+	<title>blocks</title>
+<style>
+.block{
+	position: fixed;
+	background: #454545;
+	animation: appear 400ms ease-out;
+	border: 1px solid rgba(255, 255, 255, 0.1);
+	transform-origin: bottom;
+	transition: all 250ms linear;
+}
+.block:hover{
+	background: #353535;
+	transform: scale(0.8);
+}
+@keyframes appear{
+	from{
+		transform: scale(0.1);
+	}
+	to{
+		transform: scale(1);
+	}
+}
+</style>
+</head>
+<body>
+
+<script>
+
+const screen = {width:window.innerWidth, height: window.innerHeight}
+const size = 30;
+let x = 0, y = 0;
+
+const interval = setInterval(()=>{
+
+	const block = document.createElement("div");
+	block.classList.add("block");
+	block.style.width = `${size}px`;
+	block.style.height = `${size}px`;
+	block.style.left = `${x}px`;
+	block.style.top = `${y}px`;
+	document.body.appendChild(block);
+
+	x += size;
+
+	if(x > screen.width){
+		x = 0;
+		y += size;
+	}
+	if(y > screen.height){
+		clearInterval(interval);
+	}	
+
+}, 50)
+
+</script>
+</body>
+</html>
