@@ -89,8 +89,8 @@ setInterval( () => {
 	} 
 
 	const pos = getPos(head);
-	head.style.left = `${pos.x + (pointer.x - pos.x)/7}px`;
-	head.style.top = `${pos.y + (pointer.y -  pos.y)/7}px`;
+	head.style.left = `${pos.x + (pointer.x - pos.x)/5}px`;
+	head.style.top = `${pos.y + (pointer.y -  pos.y)/5}px`;
 
 	if(col(head, fruit)){
 		fruit.style.left = `${getRand(10, window.innerWidth-10)}px`;

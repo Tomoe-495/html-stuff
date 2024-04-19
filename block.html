@@ -11,8 +11,11 @@
 			background: #454545;
 			animation: appear 400ms ease-out;
 			border: 1px solid rgba(255, 255, 255, 0.1);
-			transform-origin: bottom;
+			transform-origin: center;
 			transition: all 250ms linear;
+		}
+		.block.active{
+			transform: scale(0.1) rotate(45deg);
 		}
 
 		.block:hover {
@@ -22,11 +25,11 @@
 
 		@keyframes appear {
 			from {
-				transform: scale(0.1);
+				transform: scale(0.1) rotateZ(45deg);
 			}
 
 			to {
-				transform: scale(1);
+				transform: scale(1) rotateZ(0);
 			}
 		}
 	</style>
@@ -61,6 +64,19 @@
 			}
 
 		}, 50)
+
+setTimeout(()=>{
+	let i = 0;
+	setInterval(()=>{
+		
+		const blocks = document.querySelectorAll(".block");
+		blocks[i].classList.toggle("active");
+
+		i = i >= blocks.length ? 0 : i + 1;		
+
+	}, 50)
+	
+}, 50*15)
 
 	</script>
 </body>
