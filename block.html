@@ -9,13 +9,13 @@
 		.block {
 			position: fixed;
 			background: #454545;
-			animation: appear 400ms ease-out;
+			animation: appear 300ms ease-out;
 			border: 1px solid rgba(255, 255, 255, 0.1);
 			transform-origin: center;
-			transition: all 250ms linear;
+			transition: all 300ms ease-out;
 		}
 		.block.active{
-			transform: scale(0.1) rotate(45deg);
+			transform: scale(0.05) rotate(45deg);
 		}
 
 		.block:hover {
@@ -39,19 +39,46 @@
 
 	<script>
 
-		const screen = { width: window.innerWidth, height: window.innerHeight }
+class Block{
+	constructor(x, y, size){
+		this.x = x;
+		this.y = y;
+		this.size = size;
+		this.box = document.createElement("div");
+	}
+
+	i = 0;
+
+	update = () => {
+		this.i++;
+
+		if(this.i > 60){
+			this.i = 0;
+			this.box.classList.toggle("active");
+		}
+	}
+
+	save = () => {
+		this.box.classList.add("block");
+		this.box.style.width = `${this.size}px`;
+		this.box.style.height = `${this.size}px`;
+		this.box.style.left = `${this.x}px`;
+		this.box.style.top = `${this.y}px`;
+		document.body.appendChild(this.box);
+	}
+}
+
+		const screen = { width: window.innerWidth, height: window.innerHeight };
 		const size = 30;
 		let x = 0, y = 0;
+		const blocks = [];
 
 		const interval = setInterval(() => {
 
-			const block = document.createElement("div");
-			block.classList.add("block");
-			block.style.width = `${size}px`;
-			block.style.height = `${size}px`;
-			block.style.left = `${x}px`;
-			block.style.top = `${y}px`;
-			document.body.appendChild(block);
+
+			const block = new Block(x, y, size);
+			block.save();
+			blocks.push(block);
 
 			x += size;
 
@@ -65,18 +92,20 @@
 
 		}, 50)
 
-setTimeout(()=>{
-	let i = 0;
-	setInterval(()=>{
-		
-		const blocks = document.querySelectorAll(".block");
-		blocks[i].classList.toggle("active");
+setInterval( () => {
 
-		i = i >= blocks.length ? 0 : i + 1;		
+	for(let block of blocks){
+		block.update();
+	}	
 
-	}, 50)
-	
-}, 50*15)
+}, 1000/60)
+
+
+
+window.addEventListener("resize", () => {
+	screen.width = window.innerWidth;
+	screen.height = window.innerHeight;
+})
 
 	</script>
 </body>

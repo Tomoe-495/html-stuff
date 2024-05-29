@@ -127,10 +127,8 @@ setInterval( () => {
 
 function getRand(max, min=1, float=false) {
   let rd = Math.random() * (max - min + 1)  + min;
-  if (float) {
-	return rd;
-  }
-  return Math.floor(rd);
+
+   return float ? rd : Math.floor(rd);
 }
 
 window.addEventListener("resize", () => {
